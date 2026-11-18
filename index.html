@@ -8,138 +8,156 @@
 </head>
 <body>
 
-<header>
-    <h1>ReUse Market</h1>
-    <p>Buy Smart. Sell Easy.</p>
-</header>
+    <header>
+        <h1>ReUse Market</h1>
+        <p>Buy and Sell Used Products Easily</p>
+    </header>
 
-<nav>
-    <button onclick="showPage('home')">Home</button>
-    <button onclick="showPage('buy')">Buy Products</button>
-    <button onclick="showPage('sell')">Sell Products</button>
-</nav>
-
-<!-- HOME PAGE -->
-<section id="home" class="page">
-    <div class="hero">
-        <h1>Welcome to ReUse Market</h1>
-        <p>Buy and sell second-hand products at affordable prices.</p>
-
+    <nav>
+        <button onclick="showPage('home')">Home</button>
         <button onclick="showPage('buy')">Buy Products</button>
         <button onclick="showPage('sell')">Sell Products</button>
-    </div>
-</section>
+    </nav>
 
-<!-- BUY PAGE -->
-<section id="buy" class="page" style="display:none">
+    <main>
 
-    <h2>Available Products</h2>
+        <!-- HOME PAGE -->
+        <section id="home" class="page">
+            <div class="hero">
+                <h2>Welcome to ReUse Market!</h2>
+                <p>Give used products a second life.</p>
 
-    <div class="search-box">
-        <input type="text" id="searchInput"
-        placeholder="Search products...">
+                <button onclick="showPage('buy')">
+                    Explore Products
+                </button>
 
-        <select id="categoryFilter">
-            <option value="All">All Categories</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Furniture">Furniture</option>
-            <option value="Books">Books</option>
-            <option value="Vehicles">Vehicles</option>
-            <option value="Clothing">Clothing</option>
-        </select>
-    </div>
+                <button onclick="showPage('sell')">
+                    Sell Your Product
+                </button>
+            </div>
+        </section>
 
-    <div id="productList" class="product-container"></div>
 
-</section>
+        <!-- BUY PAGE -->
+        <section id="buy" class="page hidden">
 
-<!-- SELL PAGE -->
-<section id="sell" class="page" style="display:none">
+            <h2>Available Products</h2>
 
-    <div class="sell-section">
+            <div class="filters">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search products..."
+                >
 
-        <h2>Sell Your Product</h2>
+                <select id="categoryFilter">
+                    <option value="All">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Books">Books</option>
+                    <option value="Vehicles">Vehicles</option>
+                    <option value="Clothing">Clothing</option>
+                </select>
+            </div>
 
-        <form id="sellForm">
+            <div id="productList" class="product-list"></div>
 
-            <label>Product Name:</label>
-            <input type="text" id="productName" required>
+        </section>
 
-            <label>Price (₹):</label>
-            <input type="number" id="productPrice" min="1" required>
 
-            <label>Category:</label>
-            <select id="productCategory">
-                <option value="Electronics">Electronics</option>
-                <option value="Furniture">Furniture</option>
-                <option value="Books">Books</option>
-                <option value="Vehicles">Vehicles</option>
-                <option value="Clothing">Clothing</option>
-            </select>
+        <!-- SELL PAGE -->
+        <section id="sell" class="page hidden">
 
-            <label>Description:</label>
-            <textarea id="productDescription" required></textarea>
+            <div class="form-container">
 
-            <label>Seller Name:</label>
-            <input type="text" id="sellerName" required>
+                <h2>Sell Your Product</h2>
 
-            <label>Product Image URL:</label>
-            <input type="url" id="productImage">
+                <form id="sellForm">
 
-            <button type="submit">Post Product</button>
+                    <label>Product Name:</label>
+                    <input type="text" id="productName" required>
 
-        </form>
+                    <label>Price (₹):</label>
+                    <input type="number" id="productPrice" min="1" required>
 
-        <p id="sellMessage"></p>
+                    <label>Category:</label>
+                    <select id="productCategory" required>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Books">Books</option>
+                        <option value="Vehicles">Vehicles</option>
+                        <option value="Clothing">Clothing</option>
+                    </select>
 
-    </div>
+                    <label>Description:</label>
+                    <textarea id="productDescription" required></textarea>
 
-</section>
+                    <label>Seller Name:</label>
+                    <input type="text" id="sellerName" required>
 
-<!-- CHECKOUT -->
-<div id="checkoutModal" class="modal">
+                    <label>Product Image URL (Optional):</label>
+                    <input
+                        type="url"
+                        id="productImage"
+                        placeholder="Enter image URL"
+                    >
 
-    <div class="modal-content">
+                    <button type="submit">Post Product</button>
 
-        <button class="close-button" onclick="closeCheckout()">X</button>
+                </form>
 
-        <h2>Checkout</h2>
+                <p id="sellMessage"></p>
 
-        <p id="checkoutProduct"></p>
-        <p id="checkoutPrice"></p>
+            </div>
 
-        <form id="checkoutForm">
+        </section>
 
-            <input type="text" id="buyerName"
-            placeholder="Your Name" required>
 
-            <input type="tel" id="buyerPhone"
-            placeholder="Phone Number"
-            pattern="[0-9]{10}" required>
+        <!-- CHECKOUT PAGE -->
+        <section id="checkout" class="page hidden">
 
-            <textarea id="buyerAddress"
-            placeholder="Delivery Address" required></textarea>
+            <div class="form-container">
 
-            <select id="paymentMethod">
-                <option value="COD">Cash on Delivery</option>
-                <option value="UPI">UPI (Demo Only)</option>
-            </select>
+                <h2>Checkout</h2>
 
-            <button type="submit">Place Order</button>
+                <div id="checkoutProduct"></div>
 
-        </form>
+                <form id="checkoutForm">
 
-        <p id="orderMessage"></p>
+                    <label>Your Name:</label>
+                    <input type="text" id="buyerName" required>
 
-    </div>
+                    <label>Phone Number:</label>
+                    <input
+                        type="tel"
+                        id="buyerPhone"
+                        pattern="[0-9]{10}"
+                        placeholder="10-digit mobile number"
+                        required
+                    >
 
-</div>
+                    <label>Delivery Address:</label>
+                    <textarea id="buyerAddress" required></textarea>
 
-<footer>
-    <p>© 2026 ReUse Market</p>
-</footer>
+                    <button type="submit">Confirm Purchase</button>
 
-<script src="script.js"></script>
+                </form>
+
+                <button class="cancel-btn" onclick="showPage('buy')">
+                    Cancel
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 ReUse Market | Buy Smart, Reuse More</p>
+    </footer>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
