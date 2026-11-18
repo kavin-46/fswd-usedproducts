@@ -1,163 +1,264 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReUse Market</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+// GET PRODUCTS FROM LOCAL STORAGE
 
-    <header>
-        <h1>ReUse Market</h1>
-        <p>Buy and Sell Used Products Easily</p>
-    </header>
+let products = JSON.parse(localStorage.getItem("products")) || [];
 
-    <nav>
-        <button onclick="showPage('home')">Home</button>
-        <button onclick="showPage('buy')">Buy Products</button>
-        <button onclick="showPage('sell')">Sell Products</button>
-    </nav>
-
-    <main>
-
-        <!-- HOME PAGE -->
-        <section id="home" class="page">
-            <div class="hero">
-                <h2>Welcome to ReUse Market!</h2>
-                <p>Give used products a second life.</p>
-
-                <button onclick="showPage('buy')">
-                    Explore Products
-                </button>
-
-                <button onclick="showPage('sell')">
-                    Sell Your Product
-                </button>
-            </div>
-        </section>
+let selectedProductId = null;
 
 
-        <!-- BUY PAGE -->
-        <section id="buy" class="page hidden">
+// SAVE PRODUCTS
 
-            <h2>Available Products</h2>
-
-            <div class="filters">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search products..."
-                >
-
-                <select id="categoryFilter">
-                    <option value="All">All Categories</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="Books">Books</option>
-                    <option value="Vehicles">Vehicles</option>
-                    <option value="Clothing">Clothing</option>
-                </select>
-            </div>
-
-            <div id="productList" class="product-list"></div>
-
-        </section>
+function saveProducts() {
+    localStorage.setItem("products", JSON.stringify(products));
+}
 
 
-        <!-- SELL PAGE -->
-        <section id="sell" class="page hidden">
+// CHANGE PAGES
 
-            <div class="form-container">
+function showPage(pageName) {
 
-                <h2>Sell Your Product</h2>
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.add("hidden");
+    });
 
-                <form id="sellForm">
+    document.getElementById(pageName).classList.remove("hidden");
 
-                    <label>Product Name:</label>
-                    <input type="text" id="productName" required>
+    if (pageName === "buy") {
+        displayProducts();
+    }
 
-                    <label>Price (₹):</label>
-                    <input type="number" id="productPrice" min="1" required>
-
-                    <label>Category:</label>
-                    <select id="productCategory" required>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Furniture">Furniture</option>
-                        <option value="Books">Books</option>
-                        <option value="Vehicles">Vehicles</option>
-                        <option value="Clothing">Clothing</option>
-                    </select>
-
-                    <label>Description:</label>
-                    <textarea id="productDescription" required></textarea>
-
-                    <label>Seller Name:</label>
-                    <input type="text" id="sellerName" required>
-
-                    <label>Product Image URL (Optional):</label>
-                    <input
-                        type="url"
-                        id="productImage"
-                        placeholder="Enter image URL"
-                    >
-
-                    <button type="submit">Post Product</button>
-
-                </form>
-
-                <p id="sellMessage"></p>
-
-            </div>
-
-        </section>
+    window.scrollTo(0, 0);
+}
 
 
-        <!-- CHECKOUT PAGE -->
-        <section id="checkout" class="page hidden">
+// DISPLAY PRODUCTS
 
-            <div class="form-container">
+function displayProducts() {
 
-                <h2>Checkout</h2>
+    const productList = document.getElementById("productList");
 
-                <div id="checkoutProduct"></div>
+    const search = document.getElementById("searchInput").value.toLowerCase();
 
-                <form id="checkoutForm">
+    const category = document.getElementById("categoryFilter").value;
 
-                    <label>Your Name:</label>
-                    <input type="text" id="buyerName" required>
+    productList.innerHTML = "";
 
-                    <label>Phone Number:</label>
-                    <input
-                        type="tel"
-                        id="buyerPhone"
-                        pattern="[0-9]{10}"
-                        placeholder="10-digit mobile number"
-                        required
-                    >
+    const filteredProducts = products.filter(product => {
 
-                    <label>Delivery Address:</label>
-                    <textarea id="buyerAddress" required></textarea>
+        const matchesSearch =
+            product.name.toLowerCase().includes(search);
 
-                    <button type="submit">Confirm Purchase</button>
+        const matchesCategory =
+            category === "All" || product.category === category;
 
-                </form>
+        return matchesSearch && matchesCategory;
 
-                <button class="cancel-btn" onclick="showPage('buy')">
-                    Cancel
-                </button>
+    });
 
-            </div>
+    if (filteredProducts.length === 0) {
 
-        </section>
+        productList.innerHTML =
+            `<p class="no-products">No products available.</p>`;
 
-    </main>
+        return;
+    }
 
-    <footer>
-        <p>© 2026 ReUse Market | Buy Smart, Reuse More</p>
-    </footer>
+    filteredProducts.forEach(product => {
 
-    <script src="script.js"></script>
+        const card = document.createElement("div");
 
-</body>
-</html>
+        card.className = "product-card";
+
+        const image = document.createElement("img");
+        image.src = product.image || "https://placehold.co/300x170?text=No+Image";
+        image.alt = product.name;
+
+        image.onerror = function () {
+            this.src = "https://placehold.co/300x170?text=No+Image";
+        };
+
+        const name = document.createElement("h3");
+        name.textContent = product.name;
+
+        const price = document.createElement("p");
+        price.className = "price";
+        price.textContent = "₹" + product.price;
+
+        const categoryText = document.createElement("p");
+        categoryText.textContent = "Category: " + product.category;
+
+        const description = document.createElement("p");
+        description.textContent = product.description;
+
+        const seller = document.createElement("p");
+        seller.textContent = "Seller: " + product.seller;
+
+        const buyButton = document.createElement("button");
+        buyButton.className = "buy-btn";
+        buyButton.textContent = "Buy Now";
+
+        buyButton.addEventListener("click", function () {
+            openCheckout(product.id);
+        });
+
+        card.appendChild(image);
+        card.appendChild(name);
+        card.appendChild(price);
+        card.appendChild(categoryText);
+        card.appendChild(description);
+        card.appendChild(seller);
+        card.appendChild(buyButton);
+
+        productList.appendChild(card);
+
+    });
+
+}
+
+
+// SELL PRODUCT
+
+document.getElementById("sellForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const product = {
+
+        id: Date.now(),
+
+        name: document.getElementById("productName").value.trim(),
+
+        price: Number(document.getElementById("productPrice").value),
+
+        category: document.getElementById("productCategory").value,
+
+        description: document.getElementById("productDescription").value.trim(),
+
+        seller: document.getElementById("sellerName").value.trim(),
+
+        image: document.getElementById("productImage").value.trim()
+
+    };
+
+    products.push(product);
+
+    saveProducts();
+
+    document.getElementById("sellMessage").textContent =
+        "Product posted successfully!";
+
+    document.getElementById("sellForm").reset();
+
+});
+
+
+// OPEN CHECKOUT
+
+function openCheckout(productId) {
+
+    const product = products.find(p => p.id === productId);
+
+    if (!product) {
+        alert("Product not found.");
+        return;
+    }
+
+    selectedProductId = productId;
+
+    document.getElementById("checkoutProduct").innerHTML = `
+        <h3>${escapeHTML(product.name)}</h3>
+        <p>Price: ₹${product.price}</p>
+        <p>Seller: ${escapeHTML(product.seller)}</p>
+    `;
+
+    showPage("checkout");
+
+}
+
+
+// ESCAPE HTML TEXT
+
+function escapeHTML(value) {
+
+    return String(value).replace(/[&<>"']/g, character => {
+
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
+
+        return entities[character];
+
+    });
+
+}
+
+
+// CONFIRM PURCHASE
+
+document.getElementById("checkoutForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const product = products.find(p => p.id === selectedProductId);
+
+    if (!product) {
+        alert("This product is no longer available.");
+        showPage("buy");
+        return;
+    }
+
+    const order = {
+
+        productName: product.name,
+
+        price: product.price,
+
+        buyerName: document.getElementById("buyerName").value,
+
+        buyerPhone: document.getElementById("buyerPhone").value,
+
+        buyerAddress: document.getElementById("buyerAddress").value,
+
+        purchaseDate: new Date().toLocaleString()
+
+    };
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    orders.push(order);
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    // REMOVE PURCHASED PRODUCT
+
+    products = products.filter(p => p.id !== selectedProductId);
+
+    saveProducts();
+
+    alert("Purchase successful!");
+
+    document.getElementById("checkoutForm").reset();
+
+    selectedProductId = null;
+
+    showPage("buy");
+
+});
+
+
+// SEARCH PRODUCTS
+
+document.getElementById("searchInput").addEventListener("input", displayProducts);
+
+
+// FILTER PRODUCTS
+
+document.getElementById("categoryFilter").addEventListener("change", displayProducts);
+
+
+// INITIAL PAGE
+
+showPage("home");
