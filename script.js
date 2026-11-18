@@ -1,265 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReUse Market</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-/* Sample products for the website */
-var defaultProducts = [
-    {
-        id: 1,
-        name: "Used Smartphone",
-        price: 5000,
-        category: "Electronics",
-        description: "Good condition smartphone.",
-        seller: "Arun",
-        image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500"
-    },
-    {
-        id: 2,
-        name: "Study Table",
-        price: 2500,
-        category: "Furniture",
-        description: "Wooden study table in good condition.",
-        seller: "Priya",
-        image: "https://images.unsplash.com/photo-1499933374294-4584851497cc?w=500"
-    },
-    {
-        id: 3,
-        name: "Used Books",
-        price: 500,
-        category: "Books",
-        description: "Collection of educational books.",
-        seller: "Kumar",
-        image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500"
-    },
-    {
-        id: 4,
-        name: "Used Bicycle",
-        price: 3500,
-        category: "Vehicles",
-        description: "Bicycle in good working condition.",
-        seller: "Ravi",
-        image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500"
-    }
-];
+    <header>
+        <h1>ReUse Market</h1>
+        <p>Buy and Sell Used Products Easily</p>
+    </header>
 
-/* Load saved products or show sample products */
-var products = JSON.parse(localStorage.getItem("products"));
+    <nav>
+        <button onclick="showPage('home')">Home</button>
+        <button onclick="showPage('buy')">Buy Products</button>
+        <button onclick="showPage('sell')">Sell Products</button>
+    </nav>
 
-if (products === null) {
-    products = defaultProducts;
-    saveProducts();
-}
+    <main>
 
-var selectedProduct = null;
+        <!-- HOME PAGE -->
+        <section id="home" class="page">
+            <div class="hero">
+                <h2>Welcome to ReUse Market!</h2>
+                <p>Give used products a second life.</p>
 
-/* Save products in browser storage */
-function saveProducts() {
-    localStorage.setItem("products", JSON.stringify(products));
-}
+                <button onclick="showPage('buy')">
+                    Explore Products
+                </button>
 
-/* Display products */
-function displayProducts(productArray) {
-    var productList = document.getElementById("productList");
+                <button onclick="showPage('sell')">
+                    Sell Your Product
+                </button>
+            </div>
+        </section>
 
-    productList.innerHTML = "";
 
-    if (productArray.length === 0) {
-        productList.textContent = "No products found.";
-        return;
-    }
+        <!-- BUY PAGE -->
+        <section id="buy" class="page hidden">
 
-    productArray.forEach(function(product) {
-        var card = document.createElement("div");
-        card.className = "product-card";
+            <h2>Available Products</h2>
 
-        var image = document.createElement("img");
-        image.src = product.image || "https://placehold.co/400x250?text=No+Image";
-        image.alt = product.name;
-        image.onerror = function() {
-            this.onerror = null;
-            this.src = "https://placehold.co/400x250?text=No+Image";
-        };
+            <div class="filters">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search products..."
+                >
 
-        var name = document.createElement("h3");
-        name.textContent = product.name;
+                <select id="categoryFilter">
+                    <option value="All">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Books">Books</option>
+                    <option value="Vehicles">Vehicles</option>
+                    <option value="Clothing">Clothing</option>
+                </select>
+            </div>
 
-        var price = document.createElement("p");
-        price.className = "price";
-        price.textContent = "₹" + product.price;
+            <div id="productList" class="product-list"></div>
 
-        var category = document.createElement("p");
-        category.textContent = "Category: " + product.category;
+        </section>
 
-        var description = document.createElement("p");
-        description.textContent = product.description;
 
-        var seller = document.createElement("p");
-        seller.textContent = "Seller: " + product.seller;
+        <!-- SELL PAGE -->
+        <section id="sell" class="page hidden">
 
-        var buyButton = document.createElement("button");
-        buyButton.textContent = "Buy Now";
-        buyButton.onclick = function() {
-            openCheckout(product.id);
-        };
+            <div class="form-container">
 
-        card.appendChild(image);
-        card.appendChild(name);
-        card.appendChild(price);
-        card.appendChild(category);
-        card.appendChild(description);
-        card.appendChild(seller);
-        card.appendChild(buyButton);
+                <h2>Sell Your Product</h2>
 
-        productList.appendChild(card);
-    });
-}
+                <form id="sellForm">
 
-/* Search products */
-function searchProducts() {
-    var searchText = document.getElementById("searchInput")
-        .value.toLowerCase().trim();
+                    <label>Product Name:</label>
+                    <input type="text" id="productName" required>
 
-    var category = document.getElementById("categoryFilter").value;
+                    <label>Price (₹):</label>
+                    <input type="number" id="productPrice" min="1" required>
 
-    var filteredProducts = products.filter(function(product) {
-        var matchesName = product.name.toLowerCase()
-            .includes(searchText);
+                    <label>Category:</label>
+                    <select id="productCategory" required>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Books">Books</option>
+                        <option value="Vehicles">Vehicles</option>
+                        <option value="Clothing">Clothing</option>
+                    </select>
 
-        var matchesCategory = category === "All" ||
-            product.category === category;
+                    <label>Description:</label>
+                    <textarea id="productDescription" required></textarea>
 
-        return matchesName && matchesCategory;
-    });
+                    <label>Seller Name:</label>
+                    <input type="text" id="sellerName" required>
 
-    displayProducts(filteredProducts);
-}
+                    <label>Product Image URL (Optional):</label>
+                    <input
+                        type="url"
+                        id="productImage"
+                        placeholder="Enter image URL"
+                    >
 
-/* Filter products by category */
-function filterProducts() {
-    searchProducts();
-}
+                    <button type="submit">Post Product</button>
 
-/* Add a new product */
-document.getElementById("sellForm").addEventListener("submit",
-    function(event) {
-        event.preventDefault();
+                </form>
 
-        var name = document.getElementById("productName").value.trim();
-        var price = Number(document.getElementById("productPrice").value);
-        var category = document.getElementById("productCategory").value;
-        var description = document.getElementById("productDescription").value.trim();
-        var seller = document.getElementById("sellerName").value.trim();
-        var image = document.getElementById("productImage").value.trim();
+                <p id="sellMessage"></p>
 
-        if (!name || !description || !seller || price <= 0) {
-            alert("Please enter valid product details.");
-            return;
-        }
+            </div>
 
-        var newProduct = {
-            id: Date.now(),
-            name: name,
-            price: price,
-            category: category,
-            description: description,
-            seller: seller,
-            image: image || "https://placehold.co/400x250?text=Used+Product"
-        };
+        </section>
 
-        products.push(newProduct);
 
-        saveProducts();
-        displayProducts(products);
+        <!-- CHECKOUT PAGE -->
+        <section id="checkout" class="page hidden">
 
-        document.getElementById("sellForm").reset();
-        document.getElementById("sellMessage").textContent =
-            "Product posted successfully!";
+            <div class="form-container">
 
-        document.getElementById("products").scrollIntoView();
-    }
-);
+                <h2>Checkout</h2>
 
-/* Open checkout popup */
-function openCheckout(productId) {
-    selectedProduct = products.find(function(product) {
-        return product.id === productId;
-    });
+                <div id="checkoutProduct"></div>
 
-    if (!selectedProduct) {
-        alert("This product is no longer available.");
-        return;
-    }
+                <form id="checkoutForm">
 
-    document.getElementById("checkoutProduct").textContent =
-        "Product: " + selectedProduct.name;
+                    <label>Your Name:</label>
+                    <input type="text" id="buyerName" required>
 
-    document.getElementById("checkoutPrice").textContent =
-        "Total: ₹" + selectedProduct.price;
+                    <label>Phone Number:</label>
+                    <input
+                        type="tel"
+                        id="buyerPhone"
+                        pattern="[0-9]{10}"
+                        placeholder="10-digit mobile number"
+                        required
+                    >
 
-    document.getElementById("orderMessage").textContent = "";
-    document.getElementById("checkoutModal").style.display = "block";
-}
+                    <label>Delivery Address:</label>
+                    <textarea id="buyerAddress" required></textarea>
 
-/* Close checkout popup */
-function closeCheckout() {
-    document.getElementById("checkoutModal").style.display = "none";
-}
+                    <button type="submit">Confirm Purchase</button>
 
-/* Place an order */
-document.getElementById("checkoutForm").addEventListener("submit",
-    function(event) {
-        event.preventDefault();
+                </form>
 
-        if (!selectedProduct) {
-            alert("Please select a product first.");
-            return;
-        }
+                <button class="cancel-btn" onclick="showPage('buy')">
+                    Cancel
+                </button>
 
-        var buyerName = document.getElementById("buyerName").value.trim();
-        var phone = document.getElementById("buyerPhone").value.trim();
-        var address = document.getElementById("buyerAddress").value.trim();
-        var payment = document.getElementById("paymentMethod").value;
+            </div>
 
-        if (!buyerName || !address || !/^[0-9]{10}$/.test(phone)) {
-            alert("Please enter valid buyer details.");
-            return;
-        }
+        </section>
 
-        var order = {
-            orderId: Date.now(),
-            productName: selectedProduct.name,
-            price: selectedProduct.price,
-            buyer: buyerName,
-            phone: phone,
-            address: address,
-            paymentMethod: payment,
-            status: "Order placed"
-        };
+    </main>
 
-        /* Save demo order in browser storage */
-        var orders = JSON.parse(localStorage.getItem("orders")) || [];
-        orders.push(order);
-        localStorage.setItem("orders", JSON.stringify(orders));
+    <footer>
+        <p>© 2026 ReUse Market | Buy Smart, Reuse More</p>
+    </footer>
 
-        var message = "Order placed successfully! Payment: " + payment;
+    <script src="script.js"></script>
 
-        if (payment === "UPI") {
-            message += ". Demo only: no UPI payment was collected.";
-        } else {
-            message += ". Pay cash when the product is delivered.";
-        }
-
-        document.getElementById("orderMessage").textContent = message;
-
-        /* Remove purchased product from the listings */
-        products = products.filter(function(product) {
-            return product.id !== selectedProduct.id;
-        });
-
-        saveProducts();
-        displayProducts(products);
-
-        document.getElementById("checkoutForm").reset();
-        selectedProduct = null;
-    }
-);
-
-/* Display all products when the page loads */
-displayProducts(products);
+</body>
+</html>
